@@ -2,30 +2,29 @@ version: '3.8'
 
 services:
 
-  api:
+  db:
+    container_name: ol-intel-db
     build:
-      context: ./services/users
+      context: ./services/datahub/src/db
       dockerfile: Dockerfile
-    entrypoint: ['/usr/src/app/entrypoint.sh']
+    environment:
+      - POSTGRES_USER=ol_intel
+      - POSTGRES_PASSWORD=ol_intel
     volumes:
-      - './services/users:/usr/src/app'
-    ports:
-      - 5004:5000
-    environment:
-      - FLASK_ENV=development
-      - APP_SETTINGS=src.config.DevelopmentConfig
-      - DATABASE_URL=postgresql://postgres:postgres@api-db:5432/api_dev
-      - DATABASE_TEST_URL=postgresql://postgres:postgres@api-db:5432/api_test
-    depends_on:
-      - api-db
-
-  api-db:
-    build:
-      context: ./services/users/src/db
+      - postgres_data:/var/lib/postgresql/data/
+  
+  crawler:
+    container_name: ol-intel-crawler
+    build: 
+      context: ./services/datahub/src/crawler
       dockerfile: Dockerfile
-    expose:
-      - 5432
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      
+    command: python /usr/src/app/project/app/main.py
+    volumes:
+      - ./services/datahub/src/crawler/:/usr/src/app/
+    depends_on:
+      - db
+    env_file:
+      - ./services/datahub/src/.env.dev
+
+volumes:
+  postgres_data:

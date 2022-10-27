@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.9.5-slim-buster
+FROM python:3.9.14-slim-buster
 
 # set work directory
 WORKDIR /usr/src/app
@@ -7,6 +7,7 @@ WORKDIR /usr/src/app
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV PYTHONPATH /usr/src/app
 
 # install system dependencies
 RUN apt-get update && apt-get install -y netcat libpq-dev gcc
@@ -21,3 +22,4 @@ COPY . /usr/src/app/
 
 # run entrypoint.sh
 ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+CMD ["python", "/usr/src/app/project/app/main.py"]
