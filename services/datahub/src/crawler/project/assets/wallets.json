@@ -1,0 +1,64 @@
+{
+    "community": [
+        {
+            "program": "A Good List",
+            "manager": "ricoflan",
+            "account": "BCA50D10041FA111D1B44181A264A599"
+        },
+        {
+            "program": "Application Studio",
+            "manager": "victorethno",
+            "account": "BC25F79FEF8A981BE4636AC1A2D6F587"
+        },
+        {
+            "program": "Danish Red Cross Humanitarian Fund",
+            "manager": "ShabbatCottonTail",
+            "account": "B31BD7796BC113013A2BF6C3953305FD"
+        },
+        {
+            "program": "Deep Technology Innovation Program",
+            "manager": "mZ",
+            "account": "BB6926434D1497A559E4F0487F79434F"
+        },
+        {
+            "program": "Human Rewards Program",
+            "manager": "Adal",
+            "account": "F605FE7F787551EEA808EE9ACDB98897"
+        },
+        {
+            "program": "Moonshot Program",
+            "manager": "0o-de-lally",
+            "account": "2057BCFB0189B7FD0ABA7244BA271661"
+        },
+        {
+            "program": "Ongoing Full-Time Workers Program",
+            "manager": "0o-de-lally",
+            "account": "3A6C51A0B786D644590E8A21591FA8E2"
+        },
+        {
+            "program": "RxC Research and Experimentation",
+            "manager": "Matt P",
+            "account": "C19C06A592911ED31C4100E9FB63AD7B"
+        },
+        {
+            "program": "Social Infrastructure Program",
+            "manager": "mZ",
+            "account": "19E966BFA4B32CE9B7E23721B37B96D2"
+        },
+        {
+            "program": "The Iqlusion Engineering Fund",
+            "manager": "zmanian",
+            "account": "C906F67F626683B77145D1F20C1A753B"
+        },
+        {
+            "program": "Tip Jar",
+            "manager": "0o-de-lally",
+            "account": "2B0E8325DEA5BE93D856CFDE2D0CBA12"
+        },
+        {
+            "program": "University of Toronto MSRG",
+            "manager": "Shashank",
+            "account": "1367B68C86CB27FA7215D9F75A26EB8F"
+        }
+    ]
+}
