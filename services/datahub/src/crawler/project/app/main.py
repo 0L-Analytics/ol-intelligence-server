@@ -8,7 +8,7 @@ from typing import AnyStr, List
 from sqlalchemy import text, func
 
 from config import Config
-from project.db.model import PaymentEvent, ChainEvent, Epoch, NetworkStat, session
+from project.db.model import PaymentEvent, AccountTransaction, session
 
 
 def get_0l_api_data(end_point_suffix: AnyStr, output_elem: AnyStr, **options) -> List:
@@ -27,7 +27,7 @@ def get_0l_api_data(end_point_suffix: AnyStr, output_elem: AnyStr, **options) ->
                     option_string += "&"
                 option_string += f"{option_key}={options[option_key]}"
 
-        api_url = f"https://0lexplorer.io{end_point_suffix}{option_string}"
+        api_url = f"{Config.BASE_API_URI}{end_point_suffix}{option_string}"
         result = requests.get(api_url, timeout=10).json()
         if output_elem and output_elem in result:
             result = result[output_elem]
@@ -38,7 +38,7 @@ def get_0l_api_data(end_point_suffix: AnyStr, output_elem: AnyStr, **options) ->
     return result
 
 
-def load_transactions_for_addr_list(addresslist: List) -> None:
+def load_events_for_addr_list(addresslist: List) -> None:
     """
     Loads all the transaction for an addresslist into the db.
     :param addresslist: list of 0L addresses
@@ -108,9 +108,76 @@ def load_transactions_for_addr_list(addresslist: List) -> None:
             print(f"[{datetime.now()}]:{e}")
 
 
-def load_community_wallets_transactions() -> None:
+def load_account_txs_for_addr_list(addresslist: List) -> None:
     """
-    Builds the community wallet list and loads transactions.
+    Loads all the account transactions for an addresslist into the db.
+    :param addresslist: list of 0L addresses
+    :return: no return value
+    """
+    # Iterate addresslist
+    for address in addresslist:
+
+        # fetch payment events
+        try:
+            more_to_load = True
+            batch_size = 1000
+            while more_to_load:
+
+                # Get last loaded sequence. This strategy assumes that 
+                # all events before the highest (last loaded) sequence
+                # have been loaded successfully. 
+                # TODO add a consistency check for data prior to last
+                # loaded sequence!
+                max_seq = session\
+                    .query(func.max(AccountTransaction.sequence_number))\
+                    .filter(AccountTransaction.address == address)\
+                    .scalar()
+                max_seq = max_seq if max_seq else 0
+                
+                # Get the data from the api
+                result = get_0l_api_data(
+                    end_point_suffix="/api/proxy/node/account-transactions?",
+                    output_elem="result",
+                    address=address,
+                    start=max_seq,
+                    limit=batch_size)
+                
+                # Iterate objects and store them in the db
+                for pe_obj in result:
+                    pe_id = session\
+                        .query(AccountTransaction.id)\
+                        .filter(AccountTransaction.address == address, 
+                                AccountTransaction.sequence_number == int(pe_obj['transaction']['sequence_number']))\
+                        .scalar()
+
+                    o = AccountTransaction(
+                        address=address,
+                        sequence_number=int(pe_obj['transaction']['sequence_number']),
+                        version=pe_obj['version'],
+                        tx=pe_obj['transaction'],
+                        hash=pe_obj['hash'],
+                        vm_status=pe_obj['vm_status'],
+                        gas_used=pe_obj['gas_used']
+                    )
+
+                    if pe_id:
+                        o.id = pe_id
+                        session.merge(o)
+                    else:
+                        session.add(o)
+
+                session.commit()
+
+                if len(result) < batch_size:
+                    more_to_load = False
+
+        except Exception as e:
+            print(f"[{datetime.now()}]:{e}")
+
+
+def load_community_wallet_events() -> None:
+    """
+    Builds the community wallet list and loads events.
     :return: no return value
     """
     try:
@@ -120,8 +187,14 @@ def load_community_wallets_transactions() -> None:
         address_list = [wallet['account'] for wallet in data['community']]
         f.close()
 
+        # FOR TESTING ONLY
+        if Config.ENV == "development":
+            address_list = ["3A6C51A0B786D644590E8A21591FA8E2", "C906F67F626683B77145D1F20C1A753B"]
+            ...
+
         # Load data
-        load_transactions_for_addr_list(addresslist=address_list)
+        # load_events_for_addr_list(addresslist=address_list)
+        load_account_txs_for_addr_list(addresslist=address_list)
 
     except Exception as e:
         print(f"[{datetime.now()}]:{e}")
@@ -143,7 +216,7 @@ if __name__ == "__main__":
     while True:
         # Load community wallets data
         print(f"[{datetime.now()}] Start loading community wallet transactions.")
-        load_community_wallets_transactions()
+        load_community_wallet_events()
 
         # Sleepy time before start next cyclus
         print(f"[{datetime.now()}] End crawling. Sleep {sleepy_time} minutes.")

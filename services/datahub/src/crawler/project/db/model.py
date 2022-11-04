@@ -1,6 +1,7 @@
 from sqlalchemy import Column, DateTime, Integer, String, func, UniqueConstraint, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.attributes import InstrumentedAttribute
+from sqlalchemy.dialects.postgresql import JSONB
 
 from project.db import session, engine
 
@@ -25,64 +26,78 @@ class PaymentEvent(Base):
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
 
-class ChainEvent(Base):
-    __tablename__ = "chainevent"
+class AccountTransaction(Base):
+    __tablename__ = "accounttransaction"
 
     id = Column(Integer, primary_key=True)
     address = Column(String(100), nullable=False)
-    height = Column(Integer, nullable=False)
-    timestamp = Column(DateTime, nullable=True)
-    type = Column(String(100), nullable=True)
-    status = Column(String(100), nullable=True)
-    sender = Column(String(100), nullable=True)
-    recipient = Column(String(100), nullable=True)
+    sequence_number = Column(Integer, nullable=False)
+    version = Column(Integer, nullable=False)
+    tx = Column(JSONB, nullable=False)
+    hash = Column(String(64), nullable=False)
+    vm_status = Column(JSONB)
+    gas_used = Column(Integer, nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
+# class ChainEvent(Base):
+#     __tablename__ = "chainevent"
 
-class Epoch(Base):
-    __tablename__ = "epoch"
-
-    id = Column(Integer, primary_key=True)
-    epoch = Column(Integer, nullable=False, unique=True)
-    timestamp = Column(DateTime, nullable=True)
-    height = Column(Integer, nullable=False)
-    totalsupply = Column(Integer, nullable=True)
-    miners = Column(Integer, nullable=True)
-    proofs = Column(Integer, nullable=True)
-    minerspayable = Column(Integer, nullable=True)
-    minerspayableproofs = Column(Integer, nullable=True)
-    validatorproofs = Column(Integer, nullable=True)
-    minerpaymenttotal = Column(Float, nullable=True)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+#     id = Column(Integer, primary_key=True)
+#     address = Column(String(100), nullable=False)
+#     height = Column(Integer, nullable=False)
+#     timestamp = Column(DateTime, nullable=True)
+#     type = Column(String(100), nullable=True)
+#     status = Column(String(100), nullable=True)
+#     sender = Column(String(100), nullable=True)
+#     recipient = Column(String(100), nullable=True)
+#     created_at = Column(DateTime, server_default=func.now())
+#     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
 
-class NetworkStat(Base):
-    __tablename__ = "networkstat"
+# class Epoch(Base):
+#     __tablename__ = "epoch"
 
-    id = Column(Integer, primary_key=True)
-    height = Column(Integer, nullable=False)
-    epoch = Column(Integer, nullable=False)
-    progress = Column(Float, nullable=False)
-    totalsupply = Column(Integer, nullable=False)
-    totaladdresses = Column(Integer, nullable=False)
-    totalminers = Column(Integer, nullable=False)
-    activeminers = Column(Integer, nullable=False)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+#     id = Column(Integer, primary_key=True)
+#     epoch = Column(Integer, nullable=False, unique=True)
+#     timestamp = Column(DateTime, nullable=True)
+#     height = Column(Integer, nullable=False)
+#     totalsupply = Column(Integer, nullable=True)
+#     miners = Column(Integer, nullable=True)
+#     proofs = Column(Integer, nullable=True)
+#     minerspayable = Column(Integer, nullable=True)
+#     minerspayableproofs = Column(Integer, nullable=True)
+#     validatorproofs = Column(Integer, nullable=True)
+#     minerpaymenttotal = Column(Float, nullable=True)
+#     created_at = Column(DateTime, server_default=func.now())
+#     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
 
-class EventLog(Base):
-    __tablename__ = "eventlog"
+# class NetworkStat(Base):
+#     __tablename__ = "networkstat"
 
-    id = Column(Integer, primary_key=True)
-    event_source = Column(String(500), nullable=True)
-    type = Column(String(100), nullable=True)
-    subject = Column(String(1000), nullable=True)
-    message = Column(String(5000), nullable=True)
-    response = Column(String(5000), nullable=True)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+#     id = Column(Integer, primary_key=True)
+#     height = Column(Integer, nullable=False)
+#     epoch = Column(Integer, nullable=False)
+#     progress = Column(Float, nullable=False)
+#     totalsupply = Column(Integer, nullable=False)
+#     totaladdresses = Column(Integer, nullable=False)
+#     totalminers = Column(Integer, nullable=False)
+#     activeminers = Column(Integer, nullable=False)
+#     created_at = Column(DateTime, server_default=func.now())
+#     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+# class EventLog(Base):
+#     __tablename__ = "eventlog"
+
+#     id = Column(Integer, primary_key=True)
+#     event_source = Column(String(500), nullable=True)
+#     type = Column(String(100), nullable=True)
+#     subject = Column(String(1000), nullable=True)
+#     message = Column(String(5000), nullable=True)
+#     response = Column(String(5000), nullable=True)
+#     created_at = Column(DateTime, server_default=func.now())
+#     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
 Base.metadata.create_all(engine)

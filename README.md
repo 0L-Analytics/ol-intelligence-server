@@ -34,6 +34,8 @@ docker compose exec -it db /bin/sh
 / $ plsql "<entire content of DATABASE_URL variable in .env file>"
 viz_dev=# select count(*) from paymentevent;
 ...
+viz_dev=# select tx->'script'->>'function_name' from accounttransaction where address <> 'C906F67F626683B77145D1F20C1A753B';
+...
 viz_dev=# exit
 / $ exit
 / # exit
