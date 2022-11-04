@@ -15,7 +15,7 @@ git clone https://github.com/0L-Analytics/ol-intelligence-server.git
 ```bash
 cd /path/to/yml/directory
 ```
-3. Run the following docker compose command:  
+3. Run the following docker compose command:
 ```sh
 docker compose up -d --build
 ```
@@ -27,7 +27,7 @@ docker-compose up -d --build
 ```
 
 ## Useful docker commands
-- Enter the db container to make queries directly on db:
+### Enter the db container to make queries directly on db:
 ```bash
 docker compose exec -it db /bin/sh
 / # su postgres
@@ -39,10 +39,5 @@ viz_dev=# exit
 / # exit
 ```
 
-## TODO
-- Create data model
-- Start loading data
-- Source community wallet addresses
-- Proper logging
-- Make loading async
-- ...
+## TODOS
+See issues
