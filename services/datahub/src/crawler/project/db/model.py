@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Integer, String, func, UniqueConstraint, Float
+from sqlalchemy import Column, DateTime, Integer, String, func, UniqueConstraint, Float, BigInteger
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.dialects.postgresql import JSONB
@@ -37,6 +37,17 @@ class AccountTransaction(Base):
     hash = Column(String(64), nullable=False)
     vm_status = Column(JSONB)
     gas_used = Column(Integer, nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class AccountBalance(Base):
+    __tablename__ = "accountbalance"
+
+    id = Column(Integer, primary_key=True)
+    address = Column(String(100), nullable=False)
+    account_type = Column(String(100), nullable=False)
+    balance = Column(BigInteger, nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 

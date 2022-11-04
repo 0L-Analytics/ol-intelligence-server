@@ -8,10 +8,10 @@ from typing import AnyStr, List
 from sqlalchemy import text, func
 
 from config import Config
-from project.db.model import PaymentEvent, AccountTransaction, session
+from project.db.model import PaymentEvent, AccountTransaction, AccountBalance, session
 
 
-def get_0l_api_data(end_point_suffix: AnyStr, output_elem: AnyStr, **options) -> List:
+def get_0l_api_data(end_point_suffix: AnyStr, output_elem: AnyStr=None, **options) -> List:
     """
     Gets data from the 0L API.
     :param end_point_suffix: the path of the endpoint at 0lexplorer.io
@@ -28,24 +28,24 @@ def get_0l_api_data(end_point_suffix: AnyStr, output_elem: AnyStr, **options) ->
                 option_string += f"{option_key}={options[option_key]}"
 
         api_url = f"{Config.BASE_API_URI}{end_point_suffix}{option_string}"
-        result = requests.get(api_url, timeout=10).json()
+        result = requests.get(api_url, timeout=300).json()
         if output_elem and output_elem in result:
             result = result[output_elem]
     except Exception as e:
-        # TODO add proper logging + throw specific exception
+        # TODO add proper logging + throw specific exception to break when called in a loop
         print(f"[{datetime.now()}]:{e}")
         result = []
     return result
 
 
-def load_events_for_addr_list(addresslist: List) -> None:
+def load_events_for_addr_list(address_list: List) -> None:
     """
-    Loads all the transaction for an addresslist into the db.
-    :param addresslist: list of 0L addresses
+    Loads all the transaction for an address list into the db.
+    :param address_list: list of 0L addresses
     :return: no return value
     """
-    # Iterate addresslist
-    for address in addresslist:
+    # Iterate address_list
+    for address in address_list:
 
         # fetch payment events
         try:
@@ -108,14 +108,14 @@ def load_events_for_addr_list(addresslist: List) -> None:
             print(f"[{datetime.now()}]:{e}")
 
 
-def load_account_txs_for_addr_list(addresslist: List) -> None:
+def load_account_txs_for_addr_list(address_list: List) -> None:
     """
-    Loads all the account transactions for an addresslist into the db.
-    :param addresslist: list of 0L addresses
+    Loads all the account transactions for an address list into the db.
+    :param address_list: list of 0L addresses
     :return: no return value
     """
-    # Iterate addresslist
-    for address in addresslist:
+    # Iterate address_list
+    for address in address_list:
 
         # fetch payment events
         try:
@@ -175,7 +175,46 @@ def load_account_txs_for_addr_list(addresslist: List) -> None:
             print(f"[{datetime.now()}]:{e}")
 
 
-def load_community_wallet_events() -> None:
+def load_account_balances_for_acc_type(account_type: AnyStr) -> None:
+    """
+    Loads balances for an address list into the db.
+    :param address_list: list of 0L addresses
+    :return: no return value
+    """
+    # TODO Create a account_type type
+    # fetch balances
+    try:           
+        # Get the data from the api
+        result = get_0l_api_data(
+            end_point_suffix=f":444/balances?account_type={account_type}"
+        )
+        
+        # Iterate objects and store them in the db
+        for pe_obj in result:
+            pe_id = session\
+                .query(AccountBalance.id)\
+                .filter(AccountBalance.address == pe_obj['address'])\
+                .scalar()
+
+            o = AccountBalance(
+                address=pe_obj['address'],
+                balance=int(pe_obj['balance']),
+                account_type=pe_obj['account_type']
+            )
+
+            if pe_id:
+                o.id = pe_id
+                session.merge(o)
+            else:
+                session.add(o)
+
+        session.commit()
+
+    except Exception as e:
+        print(f"[{datetime.now()}]:{e}")
+
+
+def load_community_wallet_data() -> None:
     """
     Builds the community wallet list and loads events.
     :return: no return value
@@ -193,8 +232,9 @@ def load_community_wallet_events() -> None:
             ...
 
         # Load data
-        # load_events_for_addr_list(addresslist=address_list)
-        load_account_txs_for_addr_list(addresslist=address_list)
+        load_events_for_addr_list(address_list=address_list)
+        load_account_txs_for_addr_list(address_list=address_list)
+        load_account_balances_for_acc_type("community")
 
     except Exception as e:
         print(f"[{datetime.now()}]:{e}")
@@ -215,8 +255,8 @@ if __name__ == "__main__":
 
     while True:
         # Load community wallets data
-        print(f"[{datetime.now()}] Start loading community wallet transactions.")
-        load_community_wallet_events()
+        print(f"[{datetime.now()}] Start loading community wallet data.")
+        load_community_wallet_data()
 
         # Sleepy time before start next cyclus
         print(f"[{datetime.now()}] End crawling. Sleep {sleepy_time} minutes.")

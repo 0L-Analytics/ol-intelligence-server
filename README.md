@@ -27,6 +27,10 @@ docker-compose up -d --build
 ```
 
 ## Useful docker commands
+### First build and then run all services defined in docker-compose.yml in background
+```bash
+docker compose up -d --build
+```
 ### Enter the db container to make queries directly on db:
 ```bash
 docker compose exec -it db /bin/sh
@@ -39,6 +43,19 @@ viz_dev=# select tx->'script'->>'function_name' from accounttransaction where ad
 viz_dev=# exit
 / $ exit
 / # exit
+```
+### Get logs from a container
+```bash
+docker compose logs ol-intel-crawler
+```
+### Get running containers
+```bash
+docker ps
+```
+
+### shut down comtainers and remove volumes (e.g. remove db)
+```bash
+docker compose down -v
 ```
 
 ## TODOS
@@ -68,7 +85,7 @@ https://0lexplorer.io/api/webmonitor/vitals
 
 https://0lexplorer.io/api/proofs/C906F67F626683B77145D1F20C1A753B
 
-**/proxy/node/epoch-events (NOT WORKING)**
+**/proxy/node/epoch-events (always empty)**
 
 https://0lexplorer.io/api/proxy/node/epoch-events?address=C906F67F626683B77145D1F20C1A753B
 
@@ -80,3 +97,8 @@ Example
 **/permission-tree/stats**
 
 https://0lexplorer.io:444/permission-tree/stats
+
+### Account types
+- validator
+- user
+- community
