@@ -30,7 +30,10 @@ Example
 
 https://0lexplorer.io:444/permission-tree/stats
 
-### Account types
-- validator
-- user
-- community
+https://0lexplorer.io:444/balances?account_type=basic
+
+**Account types**
+- validator (address linked to validator)
+- miner     (address linked to miner)
+- community (community slow wallet)
+- basic     (all other addresses that exist on-chain)

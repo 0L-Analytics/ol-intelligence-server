@@ -27,11 +27,11 @@ docker-compose up -d --build
 ```
 
 ## Useful docker commands
-### First build and then run all services defined in docker-compose.yml in background
+**First build and then run all services defined in docker-compose.yml in background**
 ```bash
 docker compose up -d --build
 ```
-### Enter the db container to make queries directly on db:
+**Enter the db container to make queries directly on db:**
 ```bash
 docker compose exec -it db /bin/sh
 / # su postgres
@@ -44,16 +44,17 @@ viz_dev=# exit
 / $ exit
 / # exit
 ```
-### Get logs from a container
+
+**Get logs from a container**
 ```bash
 docker compose logs ol-intel-crawler
 ```
-### Get running containers
+**Get running containers**
 ```bash
 docker ps
 ```
 
-### shut down comtainers and remove volumes (e.g. remove db)
+**Shut down comtainers and remove volumes (e.g. remove db)**
 ```bash
 docker compose down -v
 ```
