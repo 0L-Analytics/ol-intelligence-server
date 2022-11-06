@@ -2,11 +2,48 @@ version: '3.8'
 
 services:
 
+  client:
+    container_name: ol-intel-client
+    stdin_open: true
+    build:
+      context: ./services/client
+      dockerfile: Dockerfile
+    volumes:
+      - './services/client:/usr/src/app'
+      - '/usr/src/app/node_modules'
+    ports:
+      - 3007:3000
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_API_SERVICE_URL=${REACT_APP_API_SERVICE_URL}
+    depends_on:
+      - api
+  
+  api:
+    container_name: ol-intel-api
+    build:
+      context: ./services/api
+      dockerfile: Dockerfile
+    entrypoint: ['/usr/src/app/entrypoint.sh']
+    volumes:
+      - './services/api:/usr/src/app'
+    ports:
+      - 5004:5000
+    environment:
+      - FLASK_ENV=development
+      - APP_SETTINGS=src.config.DevelopmentConfig
+      - DATABASE_URL=postgresql://ol_intel:ol_intel@db:5432/viz_dev
+      - DATABASE_TEST_URL=postgresql://ol_intel:ol_intel@db:5432/viz_test
+    depends_on:
+      - db
+
   db:
     container_name: ol-intel-db
     build:
       context: ./services/datahub/src/db
       dockerfile: Dockerfile
+    expose:
+      - 5432
     environment:
       - POSTGRES_USER=ol_intel
       - POSTGRES_PASSWORD=ol_intel
@@ -16,15 +53,16 @@ services:
   crawler:
     container_name: ol-intel-crawler
     build: 
-      context: ./services/datahub/src/crawler
+      context: ./services/datahub
       dockerfile: Dockerfile
-    command: python /usr/src/app/project/app/main.py
+    command: python /usr/src/app/crawler/app/main.py
     volumes:
-      - ./services/datahub/src/crawler/:/usr/src/app/
+      - ./services/datahub/src/crawler/:/usr/src/app/crawler/
+      - ./services/datahub/src/db/:/usr/src/app/db/
     depends_on:
       - db
     env_file:
-      - ./services/datahub/src/.env.dev
+      - ./services/datahub/.env.dev
 
 volumes:
   postgres_data:

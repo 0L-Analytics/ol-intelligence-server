@@ -9,3 +9,4 @@ class Config(object):
     INITIAL_SLEEP_SECS = os.getenv("INITIAL_SLEEP_SECS")
     SLEEP_MINS = os.getenv("SLEEP_MINS")
     BASE_API_URI = "https://0lexplorer.io"
+    ASSETS_DIR = f"{PYTHONPATH}/crawler/assets"

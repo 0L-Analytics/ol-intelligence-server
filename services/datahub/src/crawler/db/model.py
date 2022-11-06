@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.dialects.postgresql import JSONB
 
-from project.db import session, engine
+from crawler.db import session, engine
 
 Base = declarative_base()
 

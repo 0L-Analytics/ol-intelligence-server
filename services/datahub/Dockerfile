@@ -12,14 +12,18 @@ ENV PYTHONPATH /usr/src/app
 # install system dependencies
 RUN apt-get update && apt-get install -y netcat libpq-dev gcc
 
+# copy app
+COPY ./src /usr/src/app/
+
 # install dependencies
 RUN pip install --upgrade pip
 COPY ./requirements.txt /usr/src/app/requirements.txt
 RUN pip install -r requirements.txt
 
-# copy project
-COPY . /usr/src/app/
-
 # run entrypoint.sh
+COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
 ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
-CMD ["python", "/usr/src/app/project/app/main.py"]
+# ENTRYPOINT ["tail", "-f", "/dev/null"]
+
+# run main.py
+CMD ["python", "/usr/src/app/crawler/app/main.py"]

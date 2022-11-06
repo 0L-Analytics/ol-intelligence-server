@@ -8,7 +8,7 @@ from typing import AnyStr, List
 from sqlalchemy import text, func
 
 from config import Config
-from project.db.model import PaymentEvent, AccountTransaction, AccountBalance, session
+from crawler.db.model import PaymentEvent, AccountTransaction, AccountBalance, session
 
 
 def get_0l_api_data(end_point_suffix: AnyStr, output_elem: AnyStr=None, **options) -> List:
@@ -221,7 +221,7 @@ def load_community_wallet_data() -> None:
     """
     try:
         # Load community wallets
-        f = open(f'{Config.PYTHONPATH}/project/assets/wallets.json')
+        f = open(f'{Config.ASSETS_DIR}/wallets.json')
         data = json.load(f)
         address_list = [wallet['account'] for wallet in data['community']]
         f.close()
