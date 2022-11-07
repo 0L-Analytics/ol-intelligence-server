@@ -25,8 +25,15 @@ docker compose up -d --build
 ```sh
 docker-compose up -d --build
 ```
+4. Create the user table and populate it with data:
+```sh
+docker compose exec api python manage.py recreate_db
+docker compose exec api python manage.py seed_db
+```
+5. Test the api at **localhost:5004/ping**
+6. Test the app at **localhost:3007**
 
-## Useful docker commands
+# Useful docker commands
 **First build and then run all services defined in docker-compose.yml in background**
 ```bash
 docker compose up -d --build

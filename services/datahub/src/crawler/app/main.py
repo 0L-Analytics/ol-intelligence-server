@@ -232,8 +232,8 @@ def load_community_wallet_data() -> None:
             ...
 
         # Load data
-        load_events_for_addr_list(address_list=address_list)
-        load_account_txs_for_addr_list(address_list=address_list)
+        # load_events_for_addr_list(address_list=address_list)
+        # load_account_txs_for_addr_list(address_list=address_list)
         load_account_balances_for_acc_type("community")
 
     except Exception as e:

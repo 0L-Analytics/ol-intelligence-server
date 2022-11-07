@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
 import "./NavBar.css";
-// import logo from '/0l-logo.png';
+
 
 const titleStyle = {
   fontWeight: "bold",
@@ -85,7 +85,6 @@ const NavBar = (props) => {
 };
 
 NavBar.propTypes = {
-  // title: PropTypes.string.isRequired,
   logoutUser: PropTypes.func.isRequired,
   isAuthenticated: PropTypes.func.isRequired,
 };

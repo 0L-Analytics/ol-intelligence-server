@@ -11,6 +11,7 @@ import NavBar from "./components/NavBar";
 import RegisterForm from "./components/RegisterForm";
 import UsersList from "./components/UsersList";
 import UserStatus from "./components/UserStatus";
+import AccountBalanceList from "./components/AccountBalanceList";
 
 const modalStyles = {
   content: {
@@ -31,7 +32,7 @@ class App extends Component {
 
     this.state = {
       users: [],
-      title: "0L-intelligence",
+      accountBalances: [],
       accessToken: null,
       messageType: null,
       messageText: null,
@@ -41,6 +42,7 @@ class App extends Component {
 
   componentDidMount() {
     this.getUsers();
+    this.getAccountBalances();
   }
 
   addUser = (data) => {
@@ -74,6 +76,17 @@ class App extends Component {
       .get(`${process.env.REACT_APP_API_SERVICE_URL}/users`)
       .then((res) => {
         this.setState({ users: res.data });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  getAccountBalances = () => {
+    axios
+      .get(`${process.env.REACT_APP_API_SERVICE_URL}/oldata`)
+      .then((res) => {
+        this.setState({ accountBalances: res.data });
       })
       .catch((err) => {
         console.log(err);
@@ -161,6 +174,7 @@ class App extends Component {
         .then((res) => {
           this.setState({ accessToken: res.data.access_token });
           this.getUsers();
+          this.getAccountBalances();
           window.localStorage.setItem("refreshToken", res.data.refresh_token);
           return true;
         })
@@ -174,13 +188,15 @@ class App extends Component {
   render() {
     return (
       <div>
+
         <NavBar
-          title={this.state.title}
           logoutUser={this.logoutUser}
           isAuthenticated={this.isAuthenticated}
         />
+
         <section className="section">
           <div className="container">
+
             {this.state.messageType && this.state.messageText && (
               <Message
                 messageType={this.state.messageType}
@@ -188,58 +204,29 @@ class App extends Component {
                 removeMessage={this.removeMessage}
               />
             )}
+
             <div className="columns">
               <div className="column is-half">
                 <br />
                 <Routes>
+
                   <Route
                     exact
                     path="/"
                     element={
                       <div>
-                        <h1 className="title is-1">Users</h1>
+                        <h1 className="title is-1">Community wallet account balances</h1>
                         <hr />
                         <br />
-                        {this.isAuthenticated() && (
-                          <button
-                            onClick={this.handleOpenModal}
-                            className="button is-primary"
-                          >
-                            Add User
-                          </button>
-                        )}
-                        <br />
-                        <br />
-                        <Modal
-                          isOpen={this.state.showModal}
-                          style={modalStyles}
-                        >
-                          <div className="modal is-active">
-                            <div className="modal-background" />
-                            <div className="modal-card">
-                              <header className="modal-card-head">
-                                <p className="modal-card-title">Add User</p>
-                                <button
-                                  className="delete"
-                                  aria-label="close"
-                                  onClick={this.handleCloseModal}
-                                />
-                              </header>
-                              <section className="modal-card-body">
-                                <AddUser addUser={this.addUser} />
-                              </section>
-                            </div>
-                          </div>
-                        </Modal>
-                        <UsersList
-                          users={this.state.users}
-                          removeUser={this.removeUser}
-                          isAuthenticated={this.isAuthenticated}
+                        <AccountBalanceList
+                          accountBalances={this.state.accountBalances}
                         />
                       </div>
                     }
                   />
+
                   <Route exact path="/about" element={<About />} />
+
                   <Route
                     exact
                     path="/register"
@@ -251,6 +238,7 @@ class App extends Component {
                       />
                     }
                   />
+
                   <Route
                     exact
                     path="/login"
