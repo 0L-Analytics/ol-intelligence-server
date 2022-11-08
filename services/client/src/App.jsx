@@ -12,6 +12,11 @@ import RegisterForm from "./components/RegisterForm";
 import UsersList from "./components/UsersList";
 import UserStatus from "./components/UserStatus";
 import AccountBalanceList from "./components/AccountBalanceList";
+import Tokenomics from "./components/Tokenomics";
+
+// import PiePetit from "./components/Pie";
+// import { Pie } from 'react-chartjs-2';
+
 
 const modalStyles = {
   content: {
@@ -25,6 +30,31 @@ const modalStyles = {
 };
 
 Modal.setAppElement(document.getElementById("root"));
+
+const state = {
+  labels: ['January', 'February', 'March',
+           'April', 'May'],
+  datasets: [
+    {
+      label: 'Rainfall',
+      backgroundColor: [
+        '#B21F00',
+        '#C9DE00',
+        '#2FDE00',
+        '#00A6B4',
+        '#6800B4'
+      ],
+      hoverBackgroundColor: [
+      '#501800',
+      '#4B5000',
+      '#175000',
+      '#003350',
+      '#35014F'
+      ],
+      data: [65, 59, 80, 81, 56]
+    }
+  ]
+}
 
 class App extends Component {
   constructor() {
@@ -84,7 +114,7 @@ class App extends Component {
 
   getAccountBalances = () => {
     axios
-      .get(`${process.env.REACT_APP_API_SERVICE_URL}/oldata`)
+      .get(`${process.env.REACT_APP_API_SERVICE_URL}/oldata/accountbalances`)
       .then((res) => {
         this.setState({ accountBalances: res.data });
       })
@@ -205,9 +235,8 @@ class App extends Component {
               />
             )}
 
-            <div className="columns">
-              <div className="column is-half">
-                <br />
+            <div className="container is-max-desktop">
+              
                 <Routes>
 
                   <Route
@@ -218,14 +247,18 @@ class App extends Component {
                         <h1 className="title is-1">Community wallet account balances</h1>
                         <hr />
                         <br />
+
                         <AccountBalanceList
                           accountBalances={this.state.accountBalances}
                         />
+
                       </div>
                     }
                   />
 
                   <Route exact path="/about" element={<About />} />
+
+                  <Route exact path="/tokenomics" element={<Tokenomics />} />
 
                   <Route
                     exact
@@ -261,7 +294,7 @@ class App extends Component {
                     }
                   />
                 </Routes>
-              </div>
+              
             </div>
           </div>
         </section>

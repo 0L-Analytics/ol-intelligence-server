@@ -235,6 +235,9 @@ def load_community_wallet_data() -> None:
         # load_events_for_addr_list(address_list=address_list)
         # load_account_txs_for_addr_list(address_list=address_list)
         load_account_balances_for_acc_type("community")
+        load_account_balances_for_acc_type("validator")
+        load_account_balances_for_acc_type("miner")
+        load_account_balances_for_acc_type("basic")
 
     except Exception as e:
         print(f"[{datetime.now()}]:{e}")

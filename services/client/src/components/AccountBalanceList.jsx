@@ -21,7 +21,7 @@ const AccountBalanceList = (props) => {
                 <td>{accountBalance.id}</td>
                 <td>{accountBalance.address}</td>
                 <td>{accountBalance.account_type}</td>
-                <td>{accountBalance.balance / 1000000}</td>
+                <td>{accountBalance.balance}</td>
                 <td>{accountBalance.updated_at}</td>
               </tr>
             );
