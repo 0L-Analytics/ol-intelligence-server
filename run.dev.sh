@@ -22,4 +22,4 @@ echo "sleep 15 secs"
 sleep 15
 
 echo "restore db"
-gunzip < ./services/datahub/src/db/dump_full.gz | docker exec -i ol-intel-db psql -U ol_intel -d viz_dev
+gunzip < ./services/datahub/src/db/dump_data.gz | docker exec -i ol-intel-db psql -U ol_intel -d viz_dev

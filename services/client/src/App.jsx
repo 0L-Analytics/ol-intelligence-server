@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import Modal from "react-modal";
 
 import About from "./components/About";
+import Footer from "./components/Footer";
 import AddUser from "./components/AddUser";
 import LoginForm from "./components/LoginForm";
 import Message from "./components/Message";
@@ -13,10 +14,11 @@ import UsersList from "./components/UsersList";
 import UserStatus from "./components/UserStatus";
 import AccountBalanceList from "./components/AccountBalanceList";
 import Tokenomics from "./components/Tokenomics";
-
-// import PiePetit from "./components/Pie";
-// import { Pie } from 'react-chartjs-2';
-
+import SideBar from "./components/SideBar";
+import DataPie from "./components/DataPie";
+import TokenomicsMetricsBar from "./components/TokenomicsMetricsBar";
+import TestPie from "./components/test";
+import Home from "./components/Home"
 
 const modalStyles = {
   content: {
@@ -29,32 +31,7 @@ const modalStyles = {
   },
 };
 
-Modal.setAppElement(document.getElementById("root"));
-
-const state = {
-  labels: ['January', 'February', 'March',
-           'April', 'May'],
-  datasets: [
-    {
-      label: 'Rainfall',
-      backgroundColor: [
-        '#B21F00',
-        '#C9DE00',
-        '#2FDE00',
-        '#00A6B4',
-        '#6800B4'
-      ],
-      hoverBackgroundColor: [
-      '#501800',
-      '#4B5000',
-      '#175000',
-      '#003350',
-      '#35014F'
-      ],
-      data: [65, 59, 80, 81, 56]
-    }
-  ]
-}
+Modal.setAppElement(document.getElementById("app"));
 
 class App extends Component {
   constructor() {
@@ -63,6 +40,7 @@ class App extends Component {
     this.state = {
       users: [],
       accountBalances: [],
+      balancesByType: [],
       accessToken: null,
       messageType: null,
       messageText: null,
@@ -73,6 +51,7 @@ class App extends Component {
   componentDidMount() {
     this.getUsers();
     this.getAccountBalances();
+    this.getBalancesByType();
   }
 
   addUser = (data) => {
@@ -117,6 +96,17 @@ class App extends Component {
       .get(`${process.env.REACT_APP_API_SERVICE_URL}/oldata/accountbalances`)
       .then((res) => {
         this.setState({ accountBalances: res.data });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  getBalancesByType = () => {
+    axios
+      .get(`${process.env.REACT_APP_API_SERVICE_URL}/oldata/balancebytype`)
+      .then((res) => {
+        this.setState({ balancesByType: res.data });
       })
       .catch((err) => {
         console.log(err);
@@ -205,6 +195,7 @@ class App extends Component {
           this.setState({ accessToken: res.data.access_token });
           this.getUsers();
           this.getAccountBalances();
+          this.getBalancesByType();
           window.localStorage.setItem("refreshToken", res.data.refresh_token);
           return true;
         })
@@ -224,80 +215,52 @@ class App extends Component {
           isAuthenticated={this.isAuthenticated}
         />
 
-        <section className="section">
-          <div className="container">
+        <div className="section content-section">
+          <div className="columns">
 
-            {this.state.messageType && this.state.messageText && (
-              <Message
-                messageType={this.state.messageType}
-                messageText={this.state.messageText}
-                removeMessage={this.removeMessage}
-              />
-            )}
+            <SideBar
+              isAuthenticated={this.isAuthenticated}
+            />
 
-            <div className="container is-max-desktop">
-              
-                <Routes>
+            <main className="column">
+            
+              <Routes>
+                <Route exact path="/" element={<Home />} />
+                <Route exact path="/about" element={<About />} />
+                <Route exact path="/tokenomics" element={<Tokenomics />} />
 
-                  <Route
-                    exact
-                    path="/"
-                    element={
-                      <div>
-                        <h1 className="title is-1">Community wallet account balances</h1>
-                        <hr />
-                        <br />
+                <Route
+                  exact
+                  path="/login"
+                  element={
+                    <LoginForm
+                      // eslint-disable-next-line react/jsx-handler-names
+                      handleLoginFormSubmit={this.handleLoginFormSubmit}
+                      isAuthenticated={this.isAuthenticated}
+                    />
+                  }
+                />
 
-                        <AccountBalanceList
-                          accountBalances={this.state.accountBalances}
-                        />
+                <Route
+                  exact
+                  path="/status"
+                  element={
+                    <UserStatus
+                      accessToken={this.state.accessToken}
+                      isAuthenticated={this.isAuthenticated}
+                    />
+                  }
+                />
 
-                      </div>
-                    }
-                  />
+              </Routes>
 
-                  <Route exact path="/about" element={<About />} />
+            </main>
 
-                  <Route exact path="/tokenomics" element={<Tokenomics />} />
-
-                  <Route
-                    exact
-                    path="/register"
-                    element={
-                      <RegisterForm
-                        // eslint-disable-next-line react/jsx-handler-names
-                        handleRegisterFormSubmit={this.handleRegisterFormSubmit}
-                        isAuthenticated={this.isAuthenticated}
-                      />
-                    }
-                  />
-
-                  <Route
-                    exact
-                    path="/login"
-                    element={
-                      <LoginForm
-                        // eslint-disable-next-line react/jsx-handler-names
-                        handleLoginFormSubmit={this.handleLoginFormSubmit}
-                        isAuthenticated={this.isAuthenticated}
-                      />
-                    }
-                  />
-                  <Route
-                    exact
-                    path="/status"
-                    element={
-                      <UserStatus
-                        accessToken={this.state.accessToken}
-                        isAuthenticated={this.isAuthenticated}
-                      />
-                    }
-                  />
-                </Routes>
-              
-            </div>
           </div>
-        </section>
+        </div>
+
+        <Footer />
+
       </div>
     );
   }
