@@ -29,9 +29,9 @@ docker compose up -d --build
 ```
 **Enter the db container to make queries directly on db:**
 ```bash
-docker compose exec -it db /bin/sh
+docker exec -it ol-intel-db /bin/bash
 / # su postgres
-/ $ plsql "<entire content of DATABASE_URL variable in .env file>"
+/ $ psql "<entire content of DATABASE_URL variable in .env file>"
 viz_dev=# select count(*) from paymentevent;
 ...
 viz_dev=# select tx->'script'->>'function_name' from accounttransaction where address <> 'C906F67F626683B77145D1F20C1A753B';
@@ -43,7 +43,7 @@ viz_dev=# exit
 
 **Get logs from a container**
 ```bash
-docker compose logs ol-intel-crawler
+docker logs ol-intel-crawler
 ```
 **Get running containers**
 ```bash
