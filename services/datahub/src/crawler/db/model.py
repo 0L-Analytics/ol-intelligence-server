@@ -54,6 +54,7 @@ class AccountBalance(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
+
 # class ChainEvent(Base):
 #     __tablename__ = "chainevent"
 
