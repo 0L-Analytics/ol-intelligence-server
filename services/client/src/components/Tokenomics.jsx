@@ -4,10 +4,13 @@ import axios from "axios";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 
+import "./Tokenomics.css";
+
+
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 
-class TokenomicsMetricsBar extends Component {
+class Tokenomics extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -82,11 +85,16 @@ class TokenomicsMetricsBar extends Component {
         };
 
         return (
-          <div >
-            <Doughnut data={data} />
+          <div className="columns is-full">
+            <div className="column">
+              <Doughnut data={data} />
+            </div>
+            <div className="column">
+              <Doughnut data={data} />
+            </div>
           </div>
         );
     }
 }
   
-export default TokenomicsMetricsBar;
+export default Tokenomics;

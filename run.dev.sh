@@ -7,4 +7,13 @@ echo "export REACT_APP_API_SERVICE_URL"
 export REACT_APP_API_SERVICE_URL=http://localhost:5004
 
 echo "run docker compose"
-docker compose up -d --build
+if ! command -v docker compose &> /dev/null
+then
+    docker compose up -d --build
+elif ! command -v docker-compose &> /dev/null
+then
+    docker-compose up -d --build
+else
+    echo "docker compose not installed?"
+    exit
+fi

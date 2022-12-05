@@ -16,6 +16,9 @@ const NavBar = (props) => {
         <Link to="/about" className="navbar-item" data-testid="nav-about">
           About
         </Link>
+        <Link to="/tokenomics" className="navbar-item" data-testid="nav-tokenomics">
+          Tokenomics
+        </Link>
       </div>
       <div className="navbar-end">
         <Link to="/register" className="navbar-item" data-testid="nav-register">
@@ -33,6 +36,9 @@ const NavBar = (props) => {
         <div className="navbar-start">
           <Link to="/about" className="navbar-item" data-testid="nav-about">
             About
+          </Link>
+          <Link to="/tokenomics" className="navbar-item" data-testid="nav-tokenomics">
+            Tokenomics
           </Link>
           <Link to="/status" className="navbar-item" data-testid="nav-status">
             User Status

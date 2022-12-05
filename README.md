@@ -15,23 +15,12 @@ git clone https://github.com/0L-Analytics/ol-intelligence-server.git
 ```bash
 cd /path/to/yml/directory
 ```
-3. Run the following docker compose command:
-```sh
-docker compose up -d --build
+3. For Ubuntu/Debian execute run.dev.sh 
 ```
-
-   If you have an older version of docker compose installed, you might need to add a hyphen between docker and compose like:
-
-```sh
-docker-compose up -d --build
+sh run.dev.sh
 ```
-4. Create the user table and populate it with data:
-```sh
-docker compose exec api python manage.py recreate_db
-docker compose exec api python manage.py seed_db
-```
-5. Test the api at **localhost:5004/ping**
-6. Test the app at **localhost:3007**
+4. Test the api at **localhost:5004/ping**
+5. Test the app at **localhost:3007**
 
 # Useful docker commands
 **First build and then run all services defined in docker-compose.yml in background**

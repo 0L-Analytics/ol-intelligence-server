@@ -1,0 +1,9 @@
+.link:hover {
+    cursor: pointer;
+    background-color: #ff5959;
+    color: #f5f5f5;
+}
+    .navbar.is-dark {
+    background-color: #ff5959;
+    color: #fff;
+}
