@@ -69,6 +69,11 @@
             "program": "Unknown 2",
             "manager": "Unknown",
             "account": "87DC2E497AC6EDAB21511333A421E5A5"
+        },
+        {
+            "program": "Test wallet 1",
+            "manager": "Pollito",
+            "account": "DA38C9B3AB9D81F6E160A712EB80D660"
         }
     ]
 }

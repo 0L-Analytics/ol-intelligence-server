@@ -13,12 +13,12 @@ const NavBar = (props) => {
   let menu = (
     <div className="navbar-menu">
       <div className="navbar-start">
-        <Link to="/about" className="navbar-item" data-testid="nav-about">
+        {/* <Link to="/about" className="navbar-item" data-testid="nav-about">
           About
         </Link>
         <Link to="/tokenomics" className="navbar-item" data-testid="nav-tokenomics">
           Tokenomics
-        </Link>
+        </Link> */}
       </div>
       <div className="navbar-end">
         <Link to="/register" className="navbar-item" data-testid="nav-register">
@@ -34,12 +34,12 @@ const NavBar = (props) => {
     menu = (
       <div className="navbar-menu">
         <div className="navbar-start">
-          <Link to="/about" className="navbar-item" data-testid="nav-about">
+          {/* <Link to="/about" className="navbar-item" data-testid="nav-about">
             About
           </Link>
           <Link to="/tokenomics" className="navbar-item" data-testid="nav-tokenomics">
             Tokenomics
-          </Link>
+          </Link> */}
           <Link to="/status" className="navbar-item" data-testid="nav-status">
             User Status
           </Link>
@@ -66,10 +66,11 @@ const NavBar = (props) => {
       <section className="container">
         <div className="navbar-brand">
 
-          <Link to="/" className="navbar-item nav-title" style={titleStyle}>
+          <span className="navbar-item nav-title" style={titleStyle}>
             <img src="/0l-logo.png" alt="Logo" />
-          </Link>
+          </span>
           
+          {/* MENU BURGER START */}
           <span
             className="nav-toggle navbar-burger"
             onClick={() => {
@@ -79,10 +80,13 @@ const NavBar = (props) => {
               menu.classList.toggle("is-active");
             }}
           >
-            <span />
-            <span />
-            <span />
+          {/* Every span below reperesents a line in the menu burger */}
+          <span />
+          <span />
+          <span />
           </span>
+          {/* MENU BURGER END */}
+
         </div>
         {menu}
       </section>

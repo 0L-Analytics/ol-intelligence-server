@@ -1,0 +1,27 @@
+html, body {
+    height: 100%;
+}
+#app {
+    height: 100%;
+    background-color: #ff5959;
+}
+.content-area {
+    background-color: #f1f3f5;
+}
+.footer {
+    color: white;
+    background-color: #ff5959;
+}
+a.footer-link {
+    color: white;
+}
+a.footer-link:hover {
+    color: black;
+}
+.content-section {
+    background-color: #fff;
+}
+.menu-list a.is-active {
+    background-color: #ff5959;
+    color: #fff;
+}

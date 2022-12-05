@@ -1,9 +1,20 @@
-.link:hover {
-    cursor: pointer;
-    background-color: #ff5959;
-    color: #f5f5f5;
+/* body {
+  background-color:lightgrey;
 }
-    .navbar.is-dark {
-    background-color: #ff5959;
-    color: #fff;
+.topBar {
+  max-height: 400px;
 }
+.section {
+  padding-top: 2rem;
+}
+.container {
+  margin-left: 0rem;
+  margin-right: 0rem;
+}
+div.pieBox {
+  width: 275px;
+  position: relative;
+}
+div.tokenomicsTopBar {
+  width: 800px;
+} */

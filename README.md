@@ -56,9 +56,10 @@ docker compose down -v
 ```
 
 ## TODOS
-See issues
+Apply a design like https://vikdiesel.github.io/admin-one-bulma-dashboard/
+See issues on github
+Define branch naming conventions
+
 
 ## Branch naming conventions
-Two branches are pretty standard and self explanatory, **dev** and **main**. Nobody develops directly on these two branches. dev branch is used to merge all work branches. Testing is done on dev branch and only from dev branch it is allowed to push to main branch.
-
-Working branches are not pushed to Github, unless there is a very good reason for it. One good reason could be two competing technologies that might take each other over at one time in the future.
+Two branches are pretty standard and self explanatory, **dev** and **main**. Development is never done directly on these two branches. Work branches are merged to dev branch. Testing is done on dev branch and only from dev branch it is allowed to push to main branch.

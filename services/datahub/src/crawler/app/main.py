@@ -214,11 +214,13 @@ def load_account_balances_for_acc_type(account_type: AnyStr) -> None:
         print(f"[{datetime.now()}]:{e}")
 
 
-def load_community_wallet_data() -> None:
+def load_data() -> None:
     """
     Builds the community wallet list and loads events.
     :return: no return value
     """
+    acc_type_list = ["community", "validator", "miner", "basic"]
+
     try:
         # Load community wallets
         f = open(f'{Config.ASSETS_DIR}/wallets.json')
@@ -228,16 +230,15 @@ def load_community_wallet_data() -> None:
 
         # FOR TESTING ONLY
         if Config.ENV == "development":
-            address_list = ["3A6C51A0B786D644590E8A21591FA8E2", "C906F67F626683B77145D1F20C1A753B"]
+            # address_list = ["3A6C51A0B786D644590E8A21591FA8E2", "C906F67F626683B77145D1F20C1A753B"]
             ...
 
         # Load data
-        # load_events_for_addr_list(address_list=address_list)
-        # load_account_txs_for_addr_list(address_list=address_list)
-        load_account_balances_for_acc_type("community")
-        load_account_balances_for_acc_type("validator")
-        load_account_balances_for_acc_type("miner")
-        load_account_balances_for_acc_type("basic")
+        load_events_for_addr_list(address_list=address_list)
+        load_account_txs_for_addr_list(address_list=address_list)
+        
+        for acc_type in acc_type_list:
+            load_account_balances_for_acc_type(acc_type)
 
     except Exception as e:
         print(f"[{datetime.now()}]:{e}")
@@ -258,8 +259,8 @@ if __name__ == "__main__":
 
     while True:
         # Load community wallets data
-        print(f"[{datetime.now()}] Start loading community wallet data.")
-        load_community_wallet_data()
+        print(f"[{datetime.now()}] Start loading data.")
+        load_data()
 
         # Sleepy time before start next cyclus
         print(f"[{datetime.now()}] End crawling. Sleep {sleepy_time} minutes.")

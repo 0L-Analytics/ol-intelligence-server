@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Doughnut } from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
 
 import "./Tokenomics.css";
 
@@ -33,7 +33,7 @@ class Tokenomics extends Component {
     return axios(options)
       .then((res) => {
         this.setState({
-            balancesByType: res.data,
+            balancesByType: res.data['data'],
         });
         })
         .catch((error) => {
@@ -48,9 +48,6 @@ class Tokenomics extends Component {
                 labels.push(element['account_type']);
                 balances.push(element['balance'])
         })
-
-        console.log(labels);
-        console.log(balances);
 
         const data = {
             labels: labels,
@@ -85,16 +82,99 @@ class Tokenomics extends Component {
         };
 
         return (
-          <div className="columns is-full">
-            <div className="column">
-              <Doughnut data={data} />
+          <div className="columns tokenomics">
+            <div className="main column mx-2 mb-4">
+              <div className="main-section mb-4 bb">
+                <h1 className="is-size-4 has-text-centered mb-3">
+                  Distribution
+                </h1>
+                <div className="columns mb-3">
+                  <div className="column level-item has-text-centered">
+                    <p className="heading">
+                      nr of wallets
+                    </p>
+                    <p className="title">
+                      426
+                    </p>
+                  </div>
+                  <div className="column level-item has-text-centered">
+                    <p className="heading">
+                      total supply
+                    </p>
+                    <p className="title">
+                      426
+                    </p>
+                  </div>
+                  <div className="column level-item has-text-centered">
+                    <p className="heading">
+                      tokens locked
+                    </p>
+                    <p className="title">
+                      426
+                    </p>
+                  </div>
+                </div>
+                <div className="columns">
+                  <div className="column">
+                    <h1 className="heading has-text-centered mb-1">
+                      Allocation by wallet type
+                    </h1>
+                    <Pie data={data} />
+                  </div>
+                  <div className="column">
+                    <h1 className="heading has-text-centered mb-1">
+                      Wallet count by wallet type
+                    </h1>
+                    <Pie data={data} />
+                  </div>
+                </div>
+                {/* main-section */}
+              </div>
+              <div className="main-section">
+                <h1 className="is-size-4 has-text-centered mb-3">
+                  Validators
+                </h1>
+                <div className="columns mb-3">
+                  <div className="column level-item has-text-centered">
+                    <p className="heading">
+                      Active validators
+                    </p>
+                    <p className="title">
+                      426
+                    </p>
+                  </div>
+                  <div className="column level-item has-text-centered">
+                    <p className="heading">
+                      Validators
+                    </p>
+                    <p className="title">
+                      426
+                    </p>
+                  </div>
+                  <div className="column level-item has-text-centered">
+                    <p className="heading">
+                      Validators
+                    </p>
+                    <p className="title">
+                      426
+                    </p>
+                  </div>
+                  <div className="column level-item has-text-centered">
+                    <p className="heading">
+                      Validators
+                    </p>
+                    <p className="title">
+                      426
+                    </p>
+                  </div>
+                </div>
+                {/* main-section */}
+              </div>
+              {/* main */}
             </div>
-            <div className="column">
-              <Doughnut data={data} />
-            </div>
+            {/* tokenomics */}
           </div>
-        );
-    }
+        );   }
 }
   
 export default Tokenomics;
