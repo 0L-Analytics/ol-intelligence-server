@@ -1,0 +1,40 @@
+[workspace]
+node_home = "/root/.0L/"
+block_dir = "vdf_proofs"
+db_path = "/root/.0L/db"
+
+[profile]
+account = "00000000000000000000000000000000"
+auth_key = "0000000000000000000000000000000000000000000000000000000000000000"
+statement = ""
+ip = "0.0.0.0"
+vfn_ip = "0.0.0.0"
+upstream_nodes = ["http://63.229.234.76:8080/", "http://71.33.207.50:8080/"]
+
+[chain_info]
+chain_id = "1"
+base_waypoint = "37966666:ba2ebaa91e4bc81d1ea053f24ceec459cd9a1c880f744c66ff913c16926efae8"
+[tx_configs.baseline_cost]
+max_gas_unit_for_tx = 10000
+coin_price_per_unit = 1
+user_tx_timeout = 5000
+
+[tx_configs.critical_txs_cost]
+max_gas_unit_for_tx = 1000000
+coin_price_per_unit = 1
+user_tx_timeout = 5000
+
+[tx_configs.management_txs_cost]
+max_gas_unit_for_tx = 100000
+coin_price_per_unit = 1
+user_tx_timeout = 5000
+
+[tx_configs.miner_txs_cost]
+max_gas_unit_for_tx = 10000
+coin_price_per_unit = 1
+user_tx_timeout = 5000
+
+[tx_configs.cheap_txs_cost]
+max_gas_unit_for_tx = 1000
+coin_price_per_unit = 1
+user_tx_timeout = 5000
