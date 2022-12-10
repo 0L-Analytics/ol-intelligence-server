@@ -9,8 +9,8 @@ ENV PYTHONPATH /usr/src/app
 WORKDIR /usr/src/app
 
 # create .0L dir
-RUN mkdir -p ~/.0L
-COPY assets/0L.toml ~/.0L/
+RUN mkdir -p /root/.0L
+COPY assets/0L.toml /root/.0L/
 
 # copy binaries
 COPY ./bin /usr/src/app/bin
@@ -26,7 +26,6 @@ RUN apt-get update \
 && apt-get install -y \
   python3 \
   python3-pip \
-  nano \
   netcat \
 && apt-get clean
 
@@ -44,9 +43,9 @@ COPY ./src /usr/src/app/src
 COPY ./manage.py /usr/src/app
 
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
-# ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
 
 # run application
 # CMD ["tail", "-f", "/dev/null"]
-CMD ["python3", "manage.py", "run", "-h", "0.0.0.0"]
+# CMD ["python3", "manage.py", "run", "-h", "0.0.0.0"]
 
