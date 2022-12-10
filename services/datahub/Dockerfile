@@ -12,13 +12,13 @@ ENV PYTHONPATH /usr/src/app
 # install system dependencies
 RUN apt-get update && apt-get install -y netcat libpq-dev gcc
 
-# copy app
-COPY ./src /usr/src/app/
-
 # install dependencies
 RUN pip install --upgrade pip
 COPY ./requirements.txt /usr/src/app/requirements.txt
 RUN pip install -r requirements.txt
+
+# copy app
+COPY ./src /usr/src/app/
 
 # run entrypoint.sh
 COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
