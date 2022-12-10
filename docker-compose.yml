@@ -63,6 +63,24 @@ services:
       - db
     env_file:
       - ./services/datahub/.env.dev
+  
+  tools:
+    container_name: ol-intel-tools
+    build:
+      context: ./services/tools
+      dockerfile: Dockerfile
+    entrypoint: ['/usr/src/app/entrypoint.sh']
+    volumes:
+      - './services/tools/src:/usr/src/app/src'
+    ports:
+      - 5005:5000
+    environment:
+      - FLASK_ENV=development
+      - APP_SETTINGS=src.config.DevelopmentConfig
+      - DATABASE_URL=postgresql://ol_intel:ol_intel@db:5432/viz_dev
+      - DATABASE_TEST_URL=postgresql://ol_intel:ol_intel@db:5432/viz_test
+    depends_on:
+      - db
 
 volumes:
   postgres_data:

@@ -51,8 +51,10 @@ class AccountBalance(Base):
     address = Column(String(100), nullable=False)
     account_type = Column(String(100), nullable=False)
     balance = Column(BigInteger, nullable=False)
+    wallet_type = Column(String(1), nullable=False, default='X')
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
 
 # class ChainEvent(Base):
 #     __tablename__ = "chainevent"
