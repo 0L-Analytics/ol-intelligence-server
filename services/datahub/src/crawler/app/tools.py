@@ -1,22 +1,31 @@
 from requests import get 
 from datetime import datetime
-from typing import List
 from config import Config
+from crawler.db.model import AccountBalance, session
 
 
-def get_wallet_type_flag(address_list: List) -> List:
+def update_wallet_type_flag() -> None:
     """
-    Gets wallet_types for addresses in the given list
-    :param address_list: 
-    :return: list of dictionaries with address and wallet_type
+    Updates wallet_types in the database.
+    :return: None
     """
-    list_out = []
     try:
-        for address in address_list:
-            api_url = f"{Config.TOOLS_URI}/ol/wallettype?address={address}"
-            result = get(api_url, timeout=15).json()
-            list_out.append(result)
+        result = session\
+            .query(AccountBalance.id, AccountBalance.address, AccountBalance.wallet_type)\
+            .filter(AccountBalance.wallet_type != 'S', AccountBalance.wallet_type != 'C')\
+            .order_by(AccountBalance.wallet_type.desc())\
+            .all()
+        if result:
+            for t in result:
+                api_url = f"{Config.TOOLS_URI}/ol/wallettype?address={t[1]}"
+                resp = get(api_url, timeout=15).json()
+                if resp['wallet_type'] != t[2]:
+                    ab = AccountBalance(
+                        id = t[0],
+                        wallet_type = resp['wallet_type']
+                    )
+                    session.merge(ab)
+                    session.commit()
     except Exception as e:
         print(f"[{datetime.now()}]:{e}")
-        list_out = []
-    return list_out
+    return None

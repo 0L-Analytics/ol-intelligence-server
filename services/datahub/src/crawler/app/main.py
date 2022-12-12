@@ -8,6 +8,7 @@ from crawler.app.oldata import (
     load_account_txs_for_addr_list, 
     load_events_for_addr_list
 )
+from crawler.app.tools import update_wallet_type_flag
 
 
 def load_data() -> None:
@@ -35,6 +36,8 @@ def load_data() -> None:
         
         for acc_type in acc_type_list:
             load_account_balances_for_acc_type(acc_type)
+        
+        update_wallet_type_flag()
 
     except Exception as e:
         print(f"[{datetime.now()}]:{e}")
