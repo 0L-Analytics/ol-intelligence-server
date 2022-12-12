@@ -10,10 +10,10 @@ export REACT_APP_API_SERVICE_URL=http://localhost:5004
 echo "run docker compose"
 if ! command -v docker compose &> /dev/null
 then
-    docker compose up -d --build
+    docker compose up -d --build $1 $2 $3 $4
 elif ! command -v docker-compose &> /dev/null
 then
-    docker-compose up -d --build
+    docker-compose up -d --build $1 $2 $3 $4
 else
     echo "docker compose not installed?"
     exit
