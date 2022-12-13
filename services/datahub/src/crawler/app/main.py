@@ -6,7 +6,8 @@ from config import Config
 from crawler.app.oldata import (
     load_account_balances_for_acc_type, 
     load_account_txs_for_addr_list, 
-    load_events_for_addr_list
+    load_events_for_addr_list,
+    load_active_validator_set
 )
 from crawler.app.tools import update_wallet_type_flag
 
@@ -29,6 +30,10 @@ def load_data() -> None:
         if Config.ENV == "development":
             # address_list = ["3A6C51A0B786D644590E8A21591FA8E2", "C906F67F626683B77145D1F20C1A753B"]
             ...
+        
+        # Load active validator set
+        print(f"[{datetime.now()}]:Start load_active_validator_set")
+        load_active_validator_set()
 
         # Load data for community wallets
         print(f"[{datetime.now()}]:Start load_events_for_addr_list")

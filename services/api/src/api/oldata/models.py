@@ -1,6 +1,8 @@
-from sqlalchemy import Column, DateTime, Integer, String, func, Float, BigInteger
+from sqlalchemy import Column, DateTime, Integer, String, func, Float, BigInteger, Boolean, update
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import JSONB
+from typing import List
+from datetime import datetime
 
 try:
     from crawler.db import engine, session
@@ -48,12 +50,57 @@ class AccountBalance(Base):
     __tablename__ = "accountbalance"
 
     id = Column(Integer, primary_key=True)
-    address = Column(String(100), nullable=False)
+    address = Column(String(100), nullable=False, unique=True)
     account_type = Column(String(100), nullable=False)
     balance = Column(BigInteger, nullable=False)
     wallet_type = Column(String(1), nullable=False, default='X')
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class ActiveValidatorSet(Base):
+    __tablename__ = "activevalidatorset"
+
+    id = Column(Integer, primary_key=True)
+    address = Column(String(100), nullable=False, unique=True)
+    ip = Column(String(15), nullable=False)
+    is_active = Column(Boolean, default=False)
+    _json = Column(JSONB, nullable=False)
+    tower_epoch = Column(Integer, nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    def load_validator_list(validator_list: List) -> None:
+        try:
+            if len(validator_list) > 0:
+                # reset is_active flag
+                u = update(ActiveValidatorSet)
+                u = u.values({"is_active": False})
+                u = u.where(ActiveValidatorSet.is_active == True)
+                engine.execute(u)
+
+                for val in validator_list:
+                    id = session.query(ActiveValidatorSet.id)\
+                        .filter(ActiveValidatorSet.address==val['account_address'])\
+                        .first()
+                    avs = ActiveValidatorSet(
+                        address = val['account_address'],
+                        ip = val['validator_ip'],
+                        is_active = True,
+                        _json = val,
+                        tower_epoch = val['tower_epoch']
+                    )
+                    if id:
+                        avs.id = id[0]
+                        session.merge(avs)
+                    else:
+                        session.add(avs)
+                    session.commit()
+        except Exception as e:
+            # TODO add proper logging + throw specific exception to break when called in a loop
+            print(f"[{datetime.now()}]:{e}")
+        
+
 
 
 # class ChainEvent(Base):

@@ -1,5 +1,10 @@
 from src import db
-from src.api.oldata.models import AccountBalance, PaymentEvent, AccountTransaction
+from src.api.oldata.models import (
+    AccountBalance, 
+    PaymentEvent, 
+    AccountTransaction, 
+    ActiveValidatorSet
+)
 from src.api.connect import session
 from sqlalchemy.sql.expression import cast, func, label
 from sqlalchemy import Integer
@@ -58,4 +63,16 @@ def get_payment_events_by_account(addr, seq_start, limit):
                 AccountTransaction.sequence_number>=seq_start)\
             .order_by(AccountTransaction.sequence_number)\
             .limit(limit)\
+            .all()
+
+
+def get_active_validator_set():
+    return session.query(
+        ActiveValidatorSet.id,
+        ActiveValidatorSet.address,
+        ActiveValidatorSet.ip,
+        ActiveValidatorSet._json,
+        ActiveValidatorSet.last_active_epoch,
+        ActiveValidatorSet.updated_at)\
+            .filter(ActiveValidatorSet.is_active==True)\
             .all()

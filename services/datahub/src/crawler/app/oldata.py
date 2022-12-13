@@ -4,7 +4,13 @@ from typing import AnyStr, List
 from sqlalchemy import func
 
 from config import Config
-from crawler.db.model import PaymentEvent, AccountTransaction, AccountBalance, session
+from crawler.db.model import (
+    PaymentEvent, 
+    AccountTransaction, 
+    AccountBalance,
+    ActiveValidatorSet,
+    session
+)
 
 
 def get_0l_api_data(end_point_suffix: AnyStr, output_elem: AnyStr=None, **options) -> List:
@@ -208,6 +214,23 @@ def load_account_balances_for_acc_type(account_type: AnyStr) -> None:
 
     except Exception as e:
         print(f"[{datetime.now()}]:{e}")
+
+
+def load_active_validator_set() -> None:
+    """
+    Loads all active validators from node vitals
+    :return: no return value
+    """
+    try:
+        end_point_suffix = "/api/webmonitor/vitals"
+        api_url = f"{Config.BASE_API_URI}{end_point_suffix}"
+        result = get(api_url, timeout=15).json()
+        validator_list = result['chain_view']['validator_view']
+        ActiveValidatorSet.load_validator_list(validator_list)
+    except Exception as e:
+        # TODO add proper logging + throw specific exception to break when called in a loop
+        print(f"[{datetime.now()}]:{e}")
+    return None
 
 
 if __name__ == "__main__":
