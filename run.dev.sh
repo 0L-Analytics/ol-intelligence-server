@@ -10,10 +10,10 @@ export REACT_APP_API_SERVICE_URL=http://localhost:5004
 echo "run docker compose"
 if ! command -v docker compose &> /dev/null
 then
-    docker compose up -d --build $1 $2 $3 $4
+    docker compose up -d --build $2 $3 $4 $5
 elif ! command -v docker-compose &> /dev/null
 then
-    docker-compose up -d --build $1 $2 $3 $4
+    docker-compose up -d --build $2 $3 $4 $5
 else
     echo "docker compose not installed?"
     exit
@@ -23,4 +23,4 @@ echo "sleep 15 secs"
 sleep 15
 
 echo "restore db"
-gunzip < ./services/datahub/src/db/dump_all.gz | docker exec -i ol-intel-db psql -U ol_intel -d viz_dev
+gunzip < ./services/datahub/src/db/$1 | docker exec -i ol-intel-db psql -U ol_intel -d viz_dev

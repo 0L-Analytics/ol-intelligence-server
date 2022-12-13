@@ -30,14 +30,20 @@ def load_data() -> None:
             # address_list = ["3A6C51A0B786D644590E8A21591FA8E2", "C906F67F626683B77145D1F20C1A753B"]
             ...
 
-        # Load data
+        # Load data for community wallets
+        print(f"[{datetime.now()}]:Start load_events_for_addr_list")
         load_events_for_addr_list(address_list=address_list)
+        print(f"[{datetime.now()}]:Start load_account_txs_for_addr_list")
         load_account_txs_for_addr_list(address_list=address_list)
         
+        # load balances
+        print(f"[{datetime.now()}]:Start load_account_balances_for_acc_type")
         for acc_type in acc_type_list:
             load_account_balances_for_acc_type(acc_type)
         
-        update_wallet_type_flag()
+        # lookup wallet_types
+        print(f"[{datetime.now()}]:Start update_wallet_type_flag")
+        update_wallet_type_flag(for_all=False)
 
     except Exception as e:
         print(f"[{datetime.now()}]:{e}")
@@ -57,7 +63,7 @@ if __name__ == "__main__":
         ...
 
     while True:
-        # Load community wallets data
+        # Load data
         print(f"[{datetime.now()}] Start loading data.")
         load_data()
 

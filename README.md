@@ -59,6 +59,7 @@ docker compose down -v
 Apply a design like https://vikdiesel.github.io/admin-one-bulma-dashboard/
 See issues on github
 Define branch naming conventions
+Optimize tools container (or merge with crawler or api)
 
 
 ## Branch naming conventions
