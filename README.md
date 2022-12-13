@@ -15,12 +15,13 @@ git clone https://github.com/0L-Analytics/ol-intelligence-server.git
 ```bash
 cd /path/to/yml/directory
 ```
-3. For Ubuntu/Debian execute run.dev.sh 
+3. For Ubuntu/Debian execute run.dev.sh. Service names as they defined in docker-compose.yml can be specified after the database backup filename, but this is optional.
 ```
-sh run.dev.sh
+sh run.dev.sh dump_all_121222.gz crawler client api
 ```
 4. Test the api at **localhost:5004/ping**
 5. Test the app at **localhost:3007**
+5. Test the tools at **localhost:5005/ping**
 
 # Useful docker commands
 **First build and then run all services defined in docker-compose.yml in background**
@@ -47,7 +48,7 @@ docker logs ol-intel-crawler
 ```
 **Get running containers**
 ```bash
-docker ps
+docker ps -a
 ```
 
 **Shut down comtainers and remove volumes (e.g. remove db)**
@@ -55,10 +56,16 @@ docker ps
 docker compose down -v
 ```
 
+**Force remove a comtainers**
+```bash
+docker rm -f ol-intel-crawler
+```
+
 ## TODOS
 Apply a design like https://vikdiesel.github.io/admin-one-bulma-dashboard/
 See issues on github
 Define branch naming conventions
+Optimize tools container (or merge with crawler or api)
 
 
 ## Branch naming conventions

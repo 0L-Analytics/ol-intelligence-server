@@ -1,4 +1,4 @@
-FROM gcc:12
+FROM python:3.9-slim
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -22,12 +22,7 @@ RUN chmod +x /usr/src/app/bin/ol
 ENV PATH "$PATH:/usr/src/app/bin"
 
 # install dependencies
-RUN apt-get update \
-&& apt-get install -y \
-  python3 \
-  python3-pip \
-  netcat \
-&& apt-get clean
+RUN apt-get update && apt-get install -y gcc netcat
 
 # install dependencies
 RUN pip install --upgrade pip
