@@ -132,7 +132,7 @@ from totals tot
     cross join tops
     cross join addr_cnt_bal_gt1
     cross join liquidity
-    cross join validator_set
+    cross join validator_set;
 
 
 -- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -296,34 +296,3 @@ from addr_bal_base a
     cross join addr_bal_counts b
 group by trunc(nr / bucket_size) + 1
 order by 1;
-
-
-
-
-
-
-
-
-
-
-
-
-/*
--- TABLES
-val_bal, com_bal, min_bal, bas_bal,
-val_cnt, com_cnt, min_cnt, bas_cnt,
-val_prc, com_prc, min_prc, bas_prc,
-
--- SINGLE MEASURES
--- vals_cnt_tot, vals_cnt_active,
--- bal_tot, 
--- adr_tot_cnt,
--- liq_supply, 
--- tot_supply,
--- top100_supply_tot_bal,          # Community wallets not taken into account
--- top100_supply_tot_prc,          # Community wallets not taken into account    
--- top10_supply_tot_bal,           # Community wallets not taken into account
--- top10_supply_tot_perc,          # Community wallets not taken into account
-top10_nv_supply_tot_bal,        # Community and validator wallets not taken into account
-adr_cnt_bal_gt1,                # = nr of addresses with balance > 1
-*/

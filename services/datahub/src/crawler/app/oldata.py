@@ -8,7 +8,7 @@ from crawler.db.model import (
     PaymentEvent, 
     AccountTransaction, 
     AccountBalance,
-    ActiveValidatorSet,
+    ValidatorSet,
     session
 )
 
@@ -216,6 +216,11 @@ def load_account_balances_for_acc_type(account_type: AnyStr) -> None:
         print(f"[{datetime.now()}]:{e}")
 
 
+def load_community_wallet_descriptions():
+    # TODO: load wallet.json into walletdescription table
+    ...
+
+
 def load_active_validator_set() -> None:
     """
     Loads all active validators from node vitals
@@ -226,7 +231,7 @@ def load_active_validator_set() -> None:
         api_url = f"{Config.BASE_API_URI}{end_point_suffix}"
         result = get(api_url, timeout=15).json()
         validator_list = result['chain_view']['validator_view']
-        ActiveValidatorSet.load_validator_list(validator_list)
+        ValidatorSet.load_validator_list(validator_list)
     except Exception as e:
         # TODO add proper logging + throw specific exception to break when called in a loop
         print(f"[{datetime.now()}]:{e}")

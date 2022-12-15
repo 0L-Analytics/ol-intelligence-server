@@ -5,7 +5,9 @@ from src.api.oldata.ol_inputs import ol_address, int_range, natural
 from src.api.oldata.queries import (  # isort:skip
     get_acc_balances,
     get_acc_balance_by_type,
-    get_payment_events_by_account
+    get_payment_events_by_account,
+    get_active_validator_set,
+    get_tokenomics
 )
 
 oldata_namespace = Namespace("oldata")
@@ -54,6 +56,45 @@ account_transaction_list = oldata_namespace.model(
     }
 )
 
+validator_set = oldata_namespace.model(
+    "ValidatorSet",
+    {
+        "id": fields.Integer(readOnly=True),
+        "address": fields.String(required=True),
+        "ip": fields.String(required=True),
+        "_json": fields.Raw(required=True),
+        "tower_epoch": fields.Integer(required=True),
+        "updated_at": fields.DateTime(required=True),
+    }
+)
+
+tokenomics_single_measures = oldata_namespace.model(
+    "TokenomicsSingleMeasures",
+    {
+        "total_balance": fields.Integer(required=True),
+        "total_addr_cnt": fields.Integer(required=True),
+        "top10_balance": fields.Integer(required=True),
+        "top100_balance": fields.Integer(required=True),
+        "top10_balance_nv": fields.Integer(required=True),
+        "top10_perc": fields.Float(required=True),
+        "top100_perc": fields.Float(required=True),
+        "top10_nv_perc": fields.Float(required=True),
+        "sum_bal_ex_com": fields.Integer(required=True),
+        "sum_bal_ex_com_val": fields.Integer(required=True),
+        "addr_cnt_bal_gt1": fields.Integer(required=True),
+        "bal_community": fields.Integer(required=True),
+        "bal_slow": fields.Integer(required=True),
+        "bal_liquid": fields.Integer(required=True),
+        "cnt_community": fields.Integer(required=True),
+        "cnt_slow": fields.Integer(required=True),
+        "cnt_liquid": fields.Integer(required=True),
+        "active_set_cnt": fields.Integer(required=True),
+        "validator_cnt": fields.Integer(required=True)
+    }
+)
+
+
+
 class AccountBalanceList(Resource):
     @oldata_namespace.marshal_with(acc_balance_full, as_list=True)
     def get(self):
@@ -84,6 +125,23 @@ class AccountTransactionList(Resource):
         return get_payment_events_by_account(args['address'], args['sequence'], args['limit']), 200
 
 
+class ActiveValidatorSet(Resource):
+    @oldata_namespace.marshal_with(validator_set, as_list=True)
+    def get(self):
+        """Returns account balances."""
+        return get_active_validator_set(), 200
+
+
+class TokenomicsSingleMeasures(Resource):
+    @oldata_namespace.marshal_with(tokenomics_single_measures, as_list=False)
+    def get(self):
+        """Returns tokenomics."""
+        return get_tokenomics(), 200
+
+
 oldata_namespace.add_resource(AccountBalanceList, "/accountbalances")
 oldata_namespace.add_resource(AccountBalanceByType, "/balancebytype")
-oldata_namespace.add_resource(AccountTransactionList, "/account-transactions")
+oldata_namespace.add_resource(AccountTransactionList, "/accounttransactions")
+oldata_namespace.add_resource(ActiveValidatorSet, "/activeset")
+oldata_namespace.add_resource(TokenomicsSingleMeasures, "/tokenomics")
+
