@@ -1,6 +1,7 @@
 from sqlalchemy import Column, DateTime, Integer, String, func, Float, BigInteger, Boolean, update
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.sql.expression import case
 from typing import List
 from datetime import datetime
 
@@ -57,9 +58,14 @@ class AccountBalance(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
+    wallet_type_name = case(
+        [(wallet_type == 'C', 'Community'),(wallet_type == 'S', 'Slow'),(wallet_type == 'N', 'Normal'),],
+        else_ = 'Unknown'
+        ).label("full_name")
 
-class ActiveValidatorSet(Base):
-    __tablename__ = "activevalidatorset"
+
+class ValidatorSet(Base):
+    __tablename__ = "validatorset"
 
     id = Column(Integer, primary_key=True)
     address = Column(String(100), nullable=False, unique=True)
@@ -74,16 +80,16 @@ class ActiveValidatorSet(Base):
         try:
             if len(validator_list) > 0:
                 # reset is_active flag
-                u = update(ActiveValidatorSet)
+                u = update(ValidatorSet)
                 u = u.values({"is_active": False})
-                u = u.where(ActiveValidatorSet.is_active == True)
+                u = u.where(ValidatorSet.is_active == True)
                 engine.execute(u)
 
                 for val in validator_list:
-                    id = session.query(ActiveValidatorSet.id)\
-                        .filter(ActiveValidatorSet.address==val['account_address'])\
+                    id = session.query(ValidatorSet.id)\
+                        .filter(ValidatorSet.address==val['account_address'])\
                         .first()
-                    avs = ActiveValidatorSet(
+                    avs = ValidatorSet(
                         address = val['account_address'],
                         ip = val['validator_ip'],
                         is_active = True,
@@ -100,6 +106,18 @@ class ActiveValidatorSet(Base):
             # TODO add proper logging + throw specific exception to break when called in a loop
             print(f"[{datetime.now()}]:{e}")
         
+
+class WalletDescription(Base):
+    __tablename__ = "walletdescription"
+
+    id = Column(Integer, primary_key=True)
+    address = Column(String(100), nullable=False, unique=True)
+    program_name = Column(String(500), nullable=False, default='unknown') 
+    description = Column(String(2000), nullable=False, default='unknown')
+    focus = Column(String(50), nullable=False, default='unknown')
+    manager = Column(String(200), nullable=False, default='unknown')
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
 
 

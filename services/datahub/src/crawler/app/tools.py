@@ -10,19 +10,21 @@ def update_wallet_type_flag(for_all: Any=False) -> None:
     Updates wallet_types in the database.
     :return: None
     """
-    if for_all:
-        # Exclude the types that can never change
-        filter = [AccountBalance.wallet_type != 'S', AccountBalance.wallet_type != 'C']
-    else:
-        # Inculde only the unassigned types
-        filter = [AccountBalance.wallet_type == 'X']
-
     try:
-        result = session\
-            .query(AccountBalance.id, AccountBalance.address, AccountBalance.wallet_type)\
-            .filter(filter)\
-            .order_by(AccountBalance.wallet_type.desc())\
-            .all()
+        if for_all:
+            # Exclude the types that can never change
+            result = session\
+                .query(AccountBalance.id, AccountBalance.address, AccountBalance.wallet_type)\
+                .filter(AccountBalance.wallet_type != 'S', AccountBalance.wallet_type != 'C')\
+                .order_by(AccountBalance.wallet_type.desc())\
+                .all()
+        else:
+            # Inculde only the unassigned types
+            result = session\
+                .query(AccountBalance.id, AccountBalance.address, AccountBalance.wallet_type)\
+                .filter(AccountBalance.wallet_type == 'X')\
+                .order_by(AccountBalance.wallet_type.desc())\
+                .all()
         if result:
             for t in result:
                 api_url = f"{Config.TOOLS_URI}/ol/wallettype?address={t[1]}"

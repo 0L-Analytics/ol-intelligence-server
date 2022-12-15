@@ -256,6 +256,18 @@ class App extends Component {
 
                 <Route
                   exact
+                  path="/register"
+                  element={
+                    <RegisterForm
+                      // eslint-disable-next-line react/jsx-handler-names
+                      handleRegisterFormSubmit={this.handleRegisterFormSubmit}
+                      isAuthenticated={this.isAuthenticated}
+                    />
+                  }
+                />
+
+                <Route
+                  exact
                   path="/login"
                   element={
                     <LoginForm
