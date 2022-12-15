@@ -1,6 +1,7 @@
 from sqlalchemy import Column, DateTime, Integer, String, func, Float, BigInteger, Boolean, update
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.sql.expression import case
 from typing import List
 from datetime import datetime
 
@@ -56,6 +57,11 @@ class AccountBalance(Base):
     wallet_type = Column(String(1), nullable=False, default='X')
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    wallet_type_name = case(
+        [(wallet_type == 'C', 'Community'),(wallet_type == 'S', 'Slow'),(wallet_type == 'N', 'Normal'),],
+        else_ = 'Unknown'
+        ).label("full_name")
 
 
 class ValidatorSet(Base):
