@@ -22,30 +22,13 @@ def get_acc_balances():
 
 
 def get_acc_balance_by_type():
-    out_py = {
-        "data": [],
-        "sum_balance": 0,
-        "sum_count": 0,
-    }
-
-    acc_balances = session.query(
+    return session.query(
         AccountBalance.account_type,
         label("balance", cast(func.sum(AccountBalance.balance) / 1000000, Integer)),
         label("count", func.count(AccountBalance.id), Integer))\
             .group_by(AccountBalance.account_type)\
             .order_by(AccountBalance.account_type)\
             .all()
-    
-    acc_balance_sums = session.query(
-        label("sum_balance", cast(func.sum(AccountBalance.balance) / 1000000, Integer)),
-        label("sum_count", func.count(AccountBalance.id), Integer))\
-            .first()
-    
-    out_py["data"] = acc_balances
-    out_py["sum_balance"] = 0 if 'sum_balance' not in acc_balance_sums else int(acc_balance_sums['sum_balance'])
-    out_py["sum_count"] = 0 if 'sum_count' not in acc_balance_sums else int(acc_balance_sums['sum_count'])
-    
-    return out_py
 
 
 def get_payment_events_by_account(addr, seq_start, limit):
@@ -75,6 +58,16 @@ def get_active_validator_set():
         ValidatorSet.tower_epoch,
         ValidatorSet.updated_at)\
             .filter(ValidatorSet.is_active==True)\
+            .all()
+
+
+def get_supply_liquidity():
+    return session.query(
+        label("wallet_type_name", AccountBalance.wallet_type_name),
+        label("balance", cast(func.sum(AccountBalance.balance) / 1000000, Integer)),
+        label("count", func.count(AccountBalance.id), Integer))\
+            .group_by(AccountBalance.wallet_type_name)\
+            .order_by(AccountBalance.wallet_type_name)\
             .all()
 
 

@@ -7,7 +7,8 @@ from src.api.oldata.queries import (  # isort:skip
     get_acc_balance_by_type,
     get_payment_events_by_account,
     get_active_validator_set,
-    get_tokenomics
+    get_tokenomics,
+    get_supply_liquidity
 )
 
 oldata_namespace = Namespace("oldata")
@@ -24,21 +25,12 @@ acc_balance_full = oldata_namespace.model(
     }
 )
 
-acc_balance_core = oldata_namespace.model(
-    "AccountBalanceCoreModel",
-    {
-        "address": fields.String(required=True),
-        "account_type": fields.String(required=True),
-        "balance": fields.Integer(required=True),
-    }
-)
-
-acc_balance_by_type = oldata_namespace.model(
+acc_bal_by_type = oldata_namespace.model(
     "AccountBalanceByTypeModel",
     {
-        "data": fields.List(fields.Nested(acc_balance_core)),
-        "sum_balance": fields.Integer(required=True),
-        "sum_count": fields.Integer(required=True),
+        "account_type": fields.String(required=True),
+        "balance": fields.Integer(required=True),
+        "count": fields.Integer(required=True),
     }
 )
 
@@ -93,6 +85,14 @@ tokenomics_single_measures = oldata_namespace.model(
     }
 )
 
+supply_liquidity  = oldata_namespace.model(
+    "SupplyLiquidityModel",
+    {
+        "wallet_type_name": fields.String(required=True),
+        "balance": fields.Integer(required=True),
+        "count": fields.Integer(required=True),
+    }
+)
 
 
 class AccountBalanceList(Resource):
@@ -103,7 +103,7 @@ class AccountBalanceList(Resource):
 
 
 class AccountBalanceByType(Resource):
-    @oldata_namespace.marshal_with(acc_balance_by_type, as_list=False)
+    @oldata_namespace.marshal_with(acc_bal_by_type, as_list=False)
     def get(self):
         """Returns account balances."""
         return get_acc_balance_by_type(), 200
@@ -139,9 +139,16 @@ class TokenomicsSingleMeasures(Resource):
         return get_tokenomics(), 200
 
 
+class SupplyLiquidity(Resource):
+    @oldata_namespace.marshal_with(supply_liquidity, as_list=True)
+    def get(self):
+        """Returns supply liquidity."""
+        return get_supply_liquidity(), 200
+
+
 oldata_namespace.add_resource(AccountBalanceList, "/accountbalances")
 oldata_namespace.add_resource(AccountBalanceByType, "/balancebytype")
 oldata_namespace.add_resource(AccountTransactionList, "/accounttransactions")
 oldata_namespace.add_resource(ActiveValidatorSet, "/activeset")
 oldata_namespace.add_resource(TokenomicsSingleMeasures, "/tokenomics")
-
+oldata_namespace.add_resource(SupplyLiquidity, "/supplyliquidity")
