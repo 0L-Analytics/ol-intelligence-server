@@ -181,5 +181,5 @@ class WalletDescription(Base):
 #     created_at = Column(DateTime, server_default=func.now())
 #     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
-if engine:
-    Base.metadata.create_all(engine)
+# if engine:
+#     Base.metadata.create_all(engine)

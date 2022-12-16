@@ -8,7 +8,10 @@ from src.api.oldata.queries import (  # isort:skip
     get_payment_events_by_account,
     get_active_validator_set,
     get_tokenomics,
-    get_supply_liquidity
+    get_supply_liquidity,
+    get_addr_bal_distribution,
+    get_top_addr_distribution,
+    get_top_100_distribution
 )
 
 oldata_namespace = Namespace("oldata")
@@ -94,6 +97,33 @@ supply_liquidity  = oldata_namespace.model(
     }
 )
 
+address_balance_distrib = oldata_namespace.model(
+    "AddressBalanceDistributionModel",
+    {
+        "balance": fields.Integer(required=True),
+        "bucket_name": fields.String(required=True),
+        "bucket_order": fields.Integer(required=True),
+    }
+)
+
+top_addr_distrib = oldata_namespace.model(
+    "TopAddressDistributionModel",
+    {
+        "bucket_name": fields.String(required=True),
+        "balance_perc": fields.Float(required=True),
+        "bucket_cumul": fields.Integer(required=True),
+        "bucket_order": fields.Integer(required=True),
+    }
+)
+
+top_100_distrib = oldata_namespace.model(
+    "Top100DistributionModel",
+    {
+        "balance": fields.Integer(required=True),
+        "addr_order": fields.Integer(required=True),
+    }
+)
+
 
 class AccountBalanceList(Resource):
     @oldata_namespace.marshal_with(acc_balance_full, as_list=True)
@@ -146,9 +176,33 @@ class SupplyLiquidity(Resource):
         return get_supply_liquidity(), 200
 
 
+class AddressBalanceDistribution(Resource):
+    @oldata_namespace.marshal_with(address_balance_distrib, as_list=True)
+    def get(self):
+        """Returns balance distribution by address."""
+        return get_addr_bal_distribution(), 200
+
+
+class TopAddressDistribution(Resource):
+    @oldata_namespace.marshal_with(top_addr_distrib, as_list=True)
+    def get(self):
+        """Returns balance distribution by top addresses."""
+        return get_top_addr_distribution(), 200
+
+
+class Top100Distribution(Resource):
+    @oldata_namespace.marshal_with(top_100_distrib, as_list=True)
+    def get(self):
+        """Returns balance distribution by top addresses."""
+        return get_top_100_distribution(), 200
+
+
 oldata_namespace.add_resource(AccountBalanceList, "/accountbalances")
 oldata_namespace.add_resource(AccountBalanceByType, "/balancebytype")
 oldata_namespace.add_resource(AccountTransactionList, "/accounttransactions")
 oldata_namespace.add_resource(ActiveValidatorSet, "/activeset")
 oldata_namespace.add_resource(TokenomicsSingleMeasures, "/tokenomics")
 oldata_namespace.add_resource(SupplyLiquidity, "/supplyliquidity")
+oldata_namespace.add_resource(AddressBalanceDistribution, "/addrbaldistribution")
+oldata_namespace.add_resource(TopAddressDistribution, "/topaddrbaldistribution")
+oldata_namespace.add_resource(Top100Distribution, "/top100distribution")

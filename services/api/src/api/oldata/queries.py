@@ -6,7 +6,7 @@ from src.api.oldata.models import (
     ValidatorSet
 )
 from src.api.connect import session, engine
-from sqlalchemy.sql.expression import cast, func, label, text
+from sqlalchemy.sql.expression import cast, func, label, text, desc
 from sqlalchemy import Integer
 
 
@@ -228,3 +228,131 @@ def get_tokenomics():
             out["active_set_cnt"] = l[17]
             out["validator_cnt"] = l[18]
     return out
+
+
+def get_addr_bal_distribution():
+    sql = text("with addr_bal_base as ("
+        "    select address, "
+        "        round(balance/1000000.0, 2) as balance, "
+        "        row_number() over (order by balance desc) as nr"
+        "    from accountbalance"
+        "    where account_type <> 'community'"
+        "    order by 2 desc"
+        ")"
+        ", addr_bal_counts as ("
+        "    select count(*) addr_cnt, "
+        "        sum(balance) as total_balance, "
+        "        trunc(count(*) / 100) as bucket_size "
+        "    from addr_bal_base"
+        ") "
+        "select "
+        "    round(sum(balance)) as balance,"
+        "    min(nr) || '-' || max(nr) bucket_name, "
+        "    cast(trunc(nr / bucket_size) + 1 as int) as bucket_order "
+        "from addr_bal_base a "
+        "    cross join addr_bal_counts b "
+        "group by trunc(nr / bucket_size) + 1 "
+        "order by 3")
+    out = []
+    with engine.connect() as con:
+        res = con.execute(sql)
+        if res:
+            for l in res:
+                row = {
+                    "balance": l[0],
+                    "bucket_name": l[1],
+                    "bucket_order": l[2]
+                }
+                out.append(row)
+    return out
+
+
+def get_top_addr_distribution():
+    sql = text("with addr_bal_base as ("
+        "    select address, "
+        "        round(balance/1000000.0, 2) as balance, "
+        "        row_number() over (order by balance desc) as nr"
+        "    from accountbalance"
+        "    where account_type <> 'community'"
+        "    order by 2 desc"
+        ")"
+        ", addr_bal_buckets as ("
+        "    select "
+        "        round(sum(balance)) as bucket_balance,"
+        "        case "
+        "            when nr between 1 and 10 then 'Top 10' "
+        "            when nr between 10 and 20 then 'Top 20'"
+        "            when nr between 20 and 50 then 'Top 50'"
+        "            when nr between 50 and 100 then 'Top 100'"
+        "            when nr between 100 and 500 then 'Top 500'"
+        "            when nr <= 1000 then 'Top 1000'"
+        "            else 'All'"
+        "        end as bucket_name,"
+        "        case "
+        "            when nr between 1 and 10 then 1"
+        "            when nr between 10 and 20 then 2"
+        "            when nr between 20 and 50 then 3"
+        "            when nr between 50 and 100 then 4"
+        "            when nr between 100 and 500 then 5"
+        "            when nr <= 1000 then 6"
+        "            else 7"
+        "        end as bucket_order"
+        "    from addr_bal_base"
+        "    group by "
+        "        case "
+        "            when nr between 1 and 10 then 'Top 10' "
+        "            when nr between 10 and 20 then 'Top 20'"
+        "            when nr between 20 and 50 then 'Top 50'"
+        "            when nr between 50 and 100 then 'Top 100'"
+        "            when nr between 100 and 500 then 'Top 500'"
+        "            when nr <= 1000 then 'Top 1000'"
+        "            else 'All'"
+        "        end,"
+        "        case "
+        "            when nr between 1 and 10 then 1"
+        "            when nr between 10 and 20 then 2"
+        "            when nr between 20 and 50 then 3"
+        "            when nr between 50 and 100 then 4"
+        "            when nr between 100 and 500 then 5"
+        "            when nr <= 1000 then 6"
+        "            else 7"
+        "        end"
+        "    order by 3"
+        ")"
+        ", totals as ("
+        "    select sum(bucket_balance) * 1.0 as total_balance "
+        "    from addr_bal_buckets"
+        ")"
+        "select "
+        "    bucket_name,"
+        "    round(bucket_balance / total_balance * 100, 2) as balance_perc,"
+        "    sum(bucket_balance) over (order by bucket_order) as bucket_cumul,"
+        "    bucket_order "
+        "from addr_bal_buckets cross join totals "
+        "where bucket_name <> 'All' "
+        "order by bucket_order")
+    out = []
+    with engine.connect() as con:
+        res = con.execute(sql)
+        if res:
+            for l in res:
+                row = {
+                    "bucket_name": l[0],
+                    "balance_perc": l[1],
+                    "bucket_cumul": l[2],
+                    "bucket_order": l[3]
+                }
+                out.append(row)
+    return out
+
+
+def get_top_100_distribution():
+    return session.query(
+        AccountBalance.address,
+        label("balance", cast(func.sum(AccountBalance.balance) / 1000000, Integer)),
+        label("addr_order", func.row_number().over(order_by=desc(AccountBalance.balance)), Integer))\
+            .filter(AccountBalance.account_type!='community')\
+            .group_by(AccountBalance.address, AccountBalance.balance)\
+            .order_by(desc(AccountBalance.balance))\
+            .limit(100)\
+            .all()

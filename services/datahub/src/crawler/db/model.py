@@ -181,5 +181,6 @@ class WalletDescription(Base):
 #     created_at = Column(DateTime, server_default=func.now())
 #     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
-if engine:
-    Base.metadata.create_all(engine)
+# ENABLE IF MODEL NEEDS TO BE DEPLOYED FROM SCRATCH
+# if engine:
+#     Base.metadata.create_all(engine)

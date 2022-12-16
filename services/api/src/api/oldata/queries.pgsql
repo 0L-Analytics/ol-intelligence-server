@@ -263,12 +263,17 @@ with addr_bal_base as (
         end
     order by 3
 )
+, totals as (
+    select sum(bucket_balance) * 1.0 as total_balance
+    from addr_bal_buckets
+)
 select 
-    bucket_balance,
     bucket_name,
+    round(bucket_balance / total_balance * 100, 2) as balance_perc,
     sum(bucket_balance) over (order by bucket_order) as bucket_running_sum,
     bucket_order
-from addr_bal_buckets
+from addr_bal_buckets cross join totals
+-- where bucket_name <> 'All'
 order by bucket_order;
 
 
@@ -288,11 +293,12 @@ with addr_bal_base as (
         trunc(count(*) / 200) as bucket_size
     from addr_bal_base
 )
-select trunc(nr / bucket_size) + 1 as bucket_nr,
+select 
     round(sum(balance)) as balance,
     -- count(*) as cnt,
-    min(nr) || '-' || max(nr) bucket_name
+    min(nr) || '-' || max(nr) bucket_name,
+    cast(trunc(nr / bucket_size) + 1 as int) as bucket_order
 from addr_bal_base a 
     cross join addr_bal_counts b
 group by trunc(nr / bucket_size) + 1
-order by 1;
+order by 3;
