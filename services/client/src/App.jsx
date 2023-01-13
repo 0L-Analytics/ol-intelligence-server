@@ -17,7 +17,7 @@ import Tokenomics from "./components/Tokenomics";
 import SideBar from "./components/SideBar";
 import DataPie from "./components/DataPie";
 import TokenomicsMetricsBar from "./components/TokenomicsMetricsBar";
-import TestPie from "./components/test";
+
 import Home from "./components/Home"
 
 const modalStyles = {

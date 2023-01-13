@@ -82,7 +82,7 @@ class TokenomicsMetricsBar extends Component {
         };
 
         return (
-          <div >
+          <div>
             <Doughnut data={data} />
           </div>
         );
